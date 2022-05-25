@@ -1,0 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600&family=Poppins:wght@500;700&family=Shizuru&display=swap");
+
+.App {
+  font-family: "Poppins", sans-serif;
+}
+
+.url-container,
+.mobile-boost,
+.mobile-nav {
+  background-color: hsl(257, 27%, 26%);
+}
+
+/* .illustration {
+  width: 140%;
+  height: auto;
+  object-fit: contain;
+} */
+
+@media (min-width: 768px) {
+  .illustration {
+    width: 50%;
+  }
+}
+
+.icon-container {
+  background-color: hsl(260, 8%, 14%);
+}
+
+@media (min-width: 1280px) {
+  .stats {
+    width: 32%;
+  }
+
+  .line {
+    width: 2%;
+  }
+}
+
+.footer {
+  background-color: hsl(260, 8%, 14%);
+}
+
+.app {
+  background-color: hsl(180, 66%, 49%);
+  background-color: hsl(257, 27%, 26%);
+
+  background-color: hsl(0, 87%, 67%);
+
+  background-color: hsl(257, 7%, 63%);
+  background-color: hsl(255, 11%, 22%);
+  background-color: hsl(260, 8%, 14%);
+
+  background-color: #581c87;
+}
