@@ -10,12 +10,6 @@
   background-color: hsl(257, 27%, 26%);
 }
 
-/* .illustration {
-  width: 140%;
-  height: auto;
-  object-fit: contain;
-} */
-
 @media (min-width: 768px) {
   .illustration {
     width: 50%;
@@ -38,17 +32,4 @@
 
 .footer {
   background-color: hsl(260, 8%, 14%);
-}
-
-.app {
-  background-color: hsl(180, 66%, 49%);
-  background-color: hsl(257, 27%, 26%);
-
-  background-color: hsl(0, 87%, 67%);
-
-  background-color: hsl(257, 7%, 63%);
-  background-color: hsl(255, 11%, 22%);
-  background-color: hsl(260, 8%, 14%);
-
-  background-color: #581c87;
 }
