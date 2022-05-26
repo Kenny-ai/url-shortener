@@ -4,7 +4,7 @@ import { ReactComponent as FullyCutomizable } from "../svg/icon-fully-customizab
 import { ReactComponent as DetailedRecords } from "../svg/icon-detailed-records.svg";
 import BoostDesktop from "../svg/bg-boost-desktop.svg";
 import ShortenDesktop from "../svg/bg-shorten-desktop.svg";
-// import { app } from "../utils";
+// import { app } from "../urlShortener";
 import axios from "axios";
 import Links from "./Links";
 import ReactLoading from "react-loading";
@@ -166,7 +166,6 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
               linkArray={linkArray}
               setLinkArray={setLinkArray}
               item={item}
-              // key={new Date().getTime()}
             />
           ))}
         </div>

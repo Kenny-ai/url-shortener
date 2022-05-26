@@ -1,4 +1,3 @@
-import React from "react";
 import { ReactComponent as Logo } from "../svg/white-logo.svg";
 import { ReactComponent as Facebook } from "../svg/icon-facebook.svg";
 import { ReactComponent as Pinterest } from "../svg/icon-pinterest.svg";

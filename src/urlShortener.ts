@@ -35,4 +35,3 @@ class UrlShortener {
 }
 
 export const app = new UrlShortener();
-// console.log(app.shorten("www.google.com"));

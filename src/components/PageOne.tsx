@@ -1,5 +1,4 @@
 import React from "react";
-// import { ReactComponent as Illustratio } from "../svg/illustration-working.svg";
 import Illustration from "../svg/illustration-working.png";
 
 interface Props {
