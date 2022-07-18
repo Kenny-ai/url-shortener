@@ -54,18 +54,18 @@ const Footer = () => {
           </p>
         </div>
 
-        <div className="text-center flex">
-          <i className="mr-4 xl:mr-8 hover:text-teal-300 transition-all cursor-pointer">
+        <div className="text-center flex gap-4 xl:gap-8">
+          <i className=" outline-2 outline outline-white rounded-full w-10 h-10 inline-flex justify-center items-center cursor-pointer transition-outline duration-300 hover:outline-offset-4 hover:outline-facebook hover:bg-facebook-bg hover:animate-shake">
             <Facebook />
           </i>
-          <i className="mr-4 xl:mr-8 hover:text-teal-300 transition-all cursor-pointer">
+          <i className=" outline-2 outline outline-white rounded-full w-10 h-10 inline-flex justify-center items-center cursor-pointer transition-outline duration-300 hover:outline-offset-4 hover:outline-twitter hover:bg-twitter-bg hover:animate-shake">
             <Twitter />
           </i>
-          <i className="mr-4 xl:mr-8 hover:text-teal-300 transition-all cursor-pointer">
+          <i className=" outline-2 outline outline-white rounded-full w-10 h-10 inline-flex justify-center items-center cursor-pointer transition-outline duration-300 hover:outline-offset-4 hover:outline-pinterest hover:bg-pinterest-bg hover:animate-shake bg-">
             <Pinterest />
           </i>
 
-          <i className="cursor-pointer">
+          <i className="outline-2 outline outline-white rounded-full w-10 h-10 inline-flex justify-center items-center cursor-pointer transition-outline duration-300 hover:outline-offset-4 hover:outline-instagram hover:bg-ig-gradient hover:animate-shake">
             <Instagram />
           </i>
         </div>
