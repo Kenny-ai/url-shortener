@@ -13,7 +13,9 @@ import ShortenDesktop from "../svg/bg-shorten-desktop.svg";
 import axios from "axios";
 import Links from "./Links";
 import ReactLoading from "react-loading";
+import { useQuery } from "@tanstack/react-query";
 
+import { v4 as uuid } from "uuid";
 interface Props {
   clicked: boolean;
   setClicked: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,49 +37,78 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
 
   const [disabled, setDisabled] = useState(true);
 
-  const [loading, setLoading] = useState(false);
+  // const getShortenedLink = () =>
+  //   axios
+  //     .post(`https://api.shrtco.de/v2/shorten?url=${link}`)
+  //     .then((response) => {
+  //       // console.log(response.data.result.short_link);
+  //       return response.data.result.short_link;
+  //       // setLinkArray([
+  //       //   ...linkArray,
+  //       //   {
+  //       //     longLink: link,
+  //       //     shortLink: response.data.result.short_link,
+  //       //   },
+  //       // ]);
+  //       // setLoading(false);
+  //     })
+  //     .then((data) => {setAnswer(data); return data })
+  //     .then((data) => console.log(data))
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setLoading(false);
 
-  const [answer, setAnswer] = useState("");
+  //       if (error.code === "ERR_NETWORK") {
+  //         handleError("An error occured. Please try again");
+  //       }
+
+  //       if (error.response.data.error_code === 10) {
+  //         handleError("This is a disallowed URL!");
+  //       }
+  //     });
 
   const getShortenedLink = () =>
     axios
-      .post(`https://api.shrtco.de/v2/shorten?url=${link}`)
-      .then((response) => {
-        // console.log(response.data.result.short_link);
-        return response.data.result.short_link;
-        // setLinkArray([
-        //   ...linkArray,
-        //   {
-        //     longLink: link,
-        //     shortLink: response.data.result.short_link,
-        //   },
-        // ]);
-        // setLoading(false);
-      })
-      .then((data) => {setAnswer(data); return data })
-      .then((data) => console.log(data))
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-
-        if (error.code === "ERR_NETWORK") {
-          handleError("An error occured. Please try again");
-        }
-
-        if (error.response.data.error_code === 10) {
-          handleError("This is a disallowed URL!");
-        }
+      .get(`https://api.shrtco.de/v2/shorten?url=${link}`, { timeout: 10000 })
+      .then((response) => response.data.result.short_link)
+      .then((data) => {
+        setAndPersist(link, data);
+        return data;
       });
+
+  const setAndPersist = (long: string, short: string) => {
+    setLinkArray([
+      ...linkArray,
+      {
+        longLink: long,
+        shortLink: short,
+      },
+    ]);
+    // localStorage.setItem("link-array", JSON.stringify(linkArray));
+  };
+
+  const { isLoading, isFetching, fetchStatus, isPaused, error, refetch } =
+    useQuery<string, any>(["link"], getShortenedLink, {
+      enabled: false,
+      retry: false,
+      networkMode: "offlineFirst",
+      // cacheTime: 10000
+    });
+
+  useEffect(() => {
+    isPaused && console.log(fetchStatus);
+  }, [fetchStatus]);
 
   const handleError = (error: string) => {
     setErrorMessage(error);
     setTimeout(() => {
       setErrorMessage("");
-    }, 2000);
+    }, 3000);
   };
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setDisabled(true);
 
     // clear input field
     inputRef.current!.value = "";
@@ -86,7 +117,7 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
     if (linkArray.filter((obj) => obj.longLink === link).length !== 0) {
       handleError("URL has already been shortened!");
     } else {
-      getShortenedLink();
+      refetch();
     }
     setClicked(false);
   };
@@ -98,6 +129,22 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
   const handlePaste = () => {
     setDisabled(false);
   };
+
+  useEffect(() => {
+    if (error) {
+      if (error.code === "ECONNABORTED") {
+        handleError("Request timeout. Please try again");
+      }
+      if (error.message === "Network Error") {
+        handleError("Please check your connection and try again");
+      }
+      if (error.response.data.error_code === 10) {
+        handleError("This is a disallowed URL!");
+      }
+    }
+    // error && handleError(error.response.data.error);
+    console.log(error);
+  }, [error]);
 
   useEffect(() => {
     const array = localStorage.getItem("link-array");
@@ -119,45 +166,47 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
   return (
     <div className="pageTwo">
       <div className="pageTwo-container bg-gray-200 flex flex-col items-center">
-        <div className="flex justify-center items-center w-full flex-col relative -mt-20 md:-mt-14 lg:-mt-20">
-          <p className="text-red-400">{linkArray[0]?.shortLink}</p>
+        <div className="flex justify-center items-center w-full flex-col -mt-20 md:-mt-14 lg:-mt-20">
           <form
-            className="url-container w-3/4 flex flex-col justify-between p-7 rounded-xl bg-cover mb-4 md:flex-row md:items-start lg:py-10 lg:px-16"
+            className="url-container w-3/4 p-8 flex flex-col justify-center rounded-xl bg-cover mb-4 lg:py-10 lg:px-16"
             style={{ backgroundImage: `url(${ShortenDesktop})` }}
             onSubmit={onSubmit}
           >
-            <div className="mb-4 lg:mb-0 md:w-2/3 lg:w-3/4">
-              <input
-                ref={inputRef}
-                onChange={handleChange}
-                onPaste={handlePaste}
-                type="url"
-                placeholder="Shorten a link here..."
-                className="w-full px-3 py-2 rounded-lg mb-2 md:py-4 focus:outline-red-400 focus:placeholder:text-red-300"
-              />
-              {<p className="lg:mb-0 text-red-400 italic">{errorMessage}</p>}
-            </div>
-
-            <button
-              disabled={disabled}
-              className={`flex justify-center items-center bg-teal-400 text-white rounded-lg py-2 md:w-36 md:h-14 md:font-bold`.concat(
-                disabled
-                  ? ` cursor-not-allowed opacity-70`
-                  : `cursor-pointer hover:bg-teal-300 transition-all active:scale-105`
-              )}
-              type="submit"
-            >
-              {loading ? (
-                <ReactLoading
-                  color="white"
-                  type="spin"
-                  width={"32px"}
-                  height={"32px"}
+            {/* <div className="h-20 bg-red-300"></div> */}
+            <div className="flex flex-col gap-6 md:flex-row justify-between">
+              <div className="lg:mb-0 md:w-2/3 lg:w-3/4">
+                <input
+                  ref={inputRef}
+                  onChange={handleChange}
+                  onPaste={handlePaste}
+                  type="url"
+                  placeholder="Shorten a link here..."
+                  className="w-full px-3 py-2 rounded-lg md:py-4 focus:outline-red-400 focus:placeholder:text-red-300"
                 />
-              ) : (
-                "Shorten it!"
-              )}
-            </button>
+              </div>
+
+              <button
+                disabled={disabled}
+                className={`flex justify-center items-center bg-teal-400 text-white rounded-lg py-2 md:w-36 md:h-14 md:font-bold`.concat(
+                  disabled
+                    ? ` cursor-not-allowed opacity-70`
+                    : `cursor-pointer hover:bg-teal-300 transition-all active:scale-105`
+                )}
+                type="submit"
+              >
+                {isFetching ? (
+                  <ReactLoading
+                    color="white"
+                    type="spin"
+                    width={"32px"}
+                    height={"32px"}
+                  />
+                ) : (
+                  "Shorten it!"
+                )}
+              </button>
+            </div>
+            {<p className="lg:mb-0 text-red-400 text-sm">{errorMessage}</p>}
           </form>
 
           {linkArray?.map((item) => (
