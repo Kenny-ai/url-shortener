@@ -10,7 +10,6 @@ import { ReactComponent as FullyCutomizable } from "../svg/icon-fully-customizab
 import { ReactComponent as DetailedRecords } from "../svg/icon-detailed-records.svg";
 import BoostDesktop from "../svg/bg-boost-desktop.svg";
 import ShortenDesktop from "../svg/bg-shorten-desktop.svg";
-// import { app } from "../urlShortener";
 import axios from "axios";
 import Links from "./Links";
 import ReactLoading from "react-loading";
@@ -38,24 +37,27 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [answer, setAnswer] = useState("");
+
   const getShortenedLink = () =>
     axios
       .post(`https://api.shrtco.de/v2/shorten?url=${link}`)
       .then((response) => {
-        console.log(response.data.result.short_link);
-        setLinkArray([
-          ...linkArray,
-          {
-            longLink: link,
-            shortLink: response.data.result.short_link,
-          },
-        ]);
-        setLoading(false);
+        // console.log(response.data.result.short_link);
+        return response.data.result.short_link;
+        // setLinkArray([
+        //   ...linkArray,
+        //   {
+        //     longLink: link,
+        //     shortLink: response.data.result.short_link,
+        //   },
+        // ]);
+        // setLoading(false);
       })
+      .then((data) => {setAnswer(data); return data })
+      .then((data) => console.log(data))
       .catch((error) => {
         console.log(error);
-        console.log(error.code);
-        console.log(error.response.data);
         setLoading(false);
 
         if (error.code === "ERR_NETWORK") {
@@ -113,7 +115,6 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
   useEffect(() => {
     clicked && inputRef.current!.focus();
   }, [clicked]);
-
 
   return (
     <div className="pageTwo">
