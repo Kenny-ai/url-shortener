@@ -107,13 +107,13 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
 
   useEffect(() => {
     if (error) {
-      if (error.code === "ECONNABORTED") {
+      if (error?.code === "ECONNABORTED") {
         handleError("Request timeout. Please try again");
       }
-      if (error.message === "Network Error") {
+      if (error?.message === "Network Error") {
         handleError("Please check your connection and try again");
       }
-      if (error.response.data.error_code === 10) {
+      if (error.response.data?.error_code === 10) {
         handleError("This is a disallowed URL!");
       }
     }
