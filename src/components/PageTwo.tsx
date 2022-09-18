@@ -15,7 +15,6 @@ import Links from "./Links";
 import ReactLoading from "react-loading";
 import { useQuery } from "@tanstack/react-query";
 
-import { v4 as uuid } from "uuid";
 interface Props {
   clicked: boolean;
   setClicked: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,46 +36,16 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
 
   const [disabled, setDisabled] = useState(true);
 
-  // const getShortenedLink = () =>
-  //   axios
-  //     .post(`https://api.shrtco.de/v2/shorten?url=${link}`)
-  //     .then((response) => {
-  //       // console.log(response.data.result.short_link);
-  //       return response.data.result.short_link;
-  //       // setLinkArray([
-  //       //   ...linkArray,
-  //       //   {
-  //       //     longLink: link,
-  //       //     shortLink: response.data.result.short_link,
-  //       //   },
-  //       // ]);
-  //       // setLoading(false);
-  //     })
-  //     .then((data) => {setAnswer(data); return data })
-  //     .then((data) => console.log(data))
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setLoading(false);
-
-  //       if (error.code === "ERR_NETWORK") {
-  //         handleError("An error occured. Please try again");
-  //       }
-
-  //       if (error.response.data.error_code === 10) {
-  //         handleError("This is a disallowed URL!");
-  //       }
-  //     });
-
   const getShortenedLink = () =>
     axios
       .get(`https://api.shrtco.de/v2/shorten?url=${link}`, { timeout: 10000 })
       .then((response) => response.data.result.short_link)
       .then((data) => {
-        setAndPersist(link, data);
+        updateLinkArray(link, data);
         return data;
       });
 
-  const setAndPersist = (long: string, short: string) => {
+  const updateLinkArray = (long: string, short: string) => {
     setLinkArray([
       ...linkArray,
       {
@@ -84,20 +53,17 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
         shortLink: short,
       },
     ]);
-    // localStorage.setItem("link-array", JSON.stringify(linkArray));
   };
 
-  const { isLoading, isFetching, fetchStatus, isPaused, error, refetch } =
-    useQuery<string, any>(["link"], getShortenedLink, {
+  const { isFetching, error, refetch } = useQuery<string, any>(
+    ["link"],
+    getShortenedLink,
+    {
       enabled: false,
       retry: false,
       networkMode: "offlineFirst",
-      // cacheTime: 10000
-    });
-
-  useEffect(() => {
-    isPaused && console.log(fetchStatus);
-  }, [fetchStatus]);
+    }
+  );
 
   const handleError = (error: string) => {
     setErrorMessage(error);
@@ -131,6 +97,15 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
   };
 
   useEffect(() => {
+    const array = localStorage.getItem("link-array");
+    array && setLinkArray(JSON.parse(array));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("link-array", JSON.stringify(linkArray));
+  }, [linkArray]);
+
+  useEffect(() => {
     if (error) {
       if (error.code === "ECONNABORTED") {
         handleError("Request timeout. Please try again");
@@ -142,18 +117,7 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
         handleError("This is a disallowed URL!");
       }
     }
-    // error && handleError(error.response.data.error);
-    console.log(error);
   }, [error]);
-
-  useEffect(() => {
-    const array = localStorage.getItem("link-array");
-    array && setLinkArray(JSON.parse(array));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("link-array", JSON.stringify(linkArray));
-  }, [linkArray]);
 
   useEffect(() => {
     setDisabled(inputRef.current?.value.length === 0);
@@ -172,7 +136,6 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
             style={{ backgroundImage: `url(${ShortenDesktop})` }}
             onSubmit={onSubmit}
           >
-            {/* <div className="h-20 bg-red-300"></div> */}
             <div className="flex flex-col gap-6 md:flex-row justify-between">
               <div className="lg:mb-0 md:w-2/3 lg:w-3/4">
                 <input
