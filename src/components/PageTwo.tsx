@@ -150,7 +150,7 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
 
   const refresh = () => {
     axios
-      .get("http://localhost:8000/refresh")
+      .get("http://localhost:8000/refresh", addCredentials)
       .then((res) => console.log(res.data))
       .catch((error) => console.log(error));
   };
