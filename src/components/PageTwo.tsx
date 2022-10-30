@@ -138,7 +138,7 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
 
   const login = () => {
     axios
-      .post("http://localhost:8000/login", userData)
+      .post("http://localhost:8000/login", userData, addCredentials)
       .then((res) => console.log(res))
       .catch((error) => console.log(error));
   };
