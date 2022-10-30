@@ -127,6 +127,38 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
     clicked && inputRef.current!.focus();
   }, [clicked]);
 
+  // begin here
+
+  const addCredentials = { withCredentials: true };
+
+  const userData = {
+    username: "Kenny",
+    password: "12345",
+  };
+
+  const login = () => {
+    axios
+      .post("http://localhost:8000/login", userData)
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error));
+  };
+
+  const myCookie = document.cookie
+    .split("; ")
+    .filter((row) => row.startsWith("jwt"))
+    .map((c) => c.split("=")[1])[0];
+
+  const refresh = () => {
+    axios
+      .get("http://localhost:8000/refresh")
+      .then((res) => console.log(res.data))
+      .catch((error) => console.log(error));
+  };
+
+  console.log("cookie ", myCookie);
+
+  // end here
+
   return (
     <div className="pageTwo">
       <div className="pageTwo-container bg-gray-200 flex flex-col items-center">
@@ -210,6 +242,14 @@ const PageTwo: React.FC<Props> = ({ clicked, setClicked }) => {
                 content.
               </p>
             </div>
+            {/* begin here */}
+            <button onClick={login} className="text-red-900 cursor-pointer">
+              Login
+            </button>
+            <button onClick={refresh} className="text-red-900 cursor-pointer">
+              Refresh
+            </button>
+            {/* end here */}
 
             <div className="line bg-teal-400 h-20 w-2 xl:h-2"></div>
 
